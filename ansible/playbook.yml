@@ -11,7 +11,7 @@
     - nodejs
     - mysql
     - nginx
-    # - php
+    - php
     # - phpmyadmin
     # - xdebug
     # - wp-cli
