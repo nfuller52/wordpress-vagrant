@@ -1,0 +1,25 @@
+---
+- name: install nginx package
+  apt: pkg=nginx state=installed update_cache=true
+  notify: start nginx
+
+- name: remove the default sites-available
+  file: >
+    path=/etc/nginx/sites-available/default
+    state=absent
+
+- name: copy our nginx wordpress configuration
+  template: >
+    src=wordpress.cnf.j2 dest=/etc/nginx/sites-available/vippetcare
+
+- name: add our site to the enabled sites
+  file: >
+    src=/etc/nginx/sites-available/vippetcare
+    dest=/etc/nginx/sites-enabled/vippetcare
+    state=link
+
+- name: remove the default sites-enabled
+  file: >
+    path=/etc/nginx/sites-enabled/default
+    state=absent
+  notify: restart nginx

@@ -10,7 +10,7 @@
     - ansible
     - nodejs
     - mysql
-    # - nginx
+    - nginx
     # - php
     # - phpmyadmin
     # - xdebug
