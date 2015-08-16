@@ -1,0 +1,18 @@
+timezone: UTC
+locale: en_US.UTF-8
+ruby:
+  download_url: https://cache.ruby-lang.org/pub/ruby/2.2/ruby-2.2.2.tar.gz
+  download_sha: 5ffc0f317e429e6b29d4a98ac521c3ce65481bfd22a8cf845fa02a7b113d9b44
+  version: 2.2.2
+  gems: [bundler, sass, wordmove, mailcatcher, bourbon]
+nodejs:
+  packages: [grunt, grunt-cli, grunt-init, gulp]
+mysql:
+  root_password: root1Password
+  user:
+    name: wpdeveloper
+    password: wpPassw0rd
+  database:
+    name: vippetcare_development
+    encoding: utf8
+    collation: utf8_general_ci

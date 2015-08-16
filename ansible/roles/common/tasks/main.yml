@@ -1,0 +1,34 @@
+---
+- name: update apt
+  apt: >
+    update_cache=yes
+
+- name: upgrade apt
+  apt: >
+    upgrade=full
+
+- name: ensure sudo is installed
+  apt: >
+    pkg=sudo state=latest
+
+- name: install base packages
+  apt: >
+    pkg={{ item }} state=installed
+  with_items:
+    - vim
+    - wget
+    - git
+    - curl
+    - ntp
+
+- name: set the timezone
+  template: >
+    src=timezone.j2 dest=/etc/timezone
+
+- name: configure the timezone
+  file: >
+    src=/usr/share/zoneinfo/{{ timezone }} dest=/etc/localtime
+    state=link force=yes backup=yes
+
+- name: set the system language pack
+  shell: "locale-gen {{ locale }}"

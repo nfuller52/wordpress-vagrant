@@ -1,0 +1,18 @@
+---
+- hosts: vagrant
+  remote_user: vagrant
+  sudo: yes
+  vars_files:
+    - vars/common.yml
+  roles:
+    - common
+    - ruby
+    - ansible
+    - nodejs
+    - mysql
+    # - nginx
+    # - php
+    # - phpmyadmin
+    # - xdebug
+    # - wp-cli
+    # - composer

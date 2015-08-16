@@ -1,0 +1,51 @@
+---
+- name: install build dependencies
+  apt: >
+    pkg={{ item }} state=latest install_recommends=no
+  with_items:
+    - build-essential
+    - git-core
+    - libcurl4-openssl-dev
+    - libncurses5-dev
+    - libffi-dev
+    - libgdbm-dev
+    - libreadline-dev
+    - libssl-dev
+    - libsqlite3-dev
+    - libxml2-dev
+    - libxslt1-dev
+    - libyaml-dev
+    - python-software-properties
+    - sqlite3
+    - zlib1g-dev
+
+- name: download ruby source
+  get_url: >
+    url={{ ruby.download_url }} sha256sum={{ ruby.download_sha }}
+    dest=/root/ruby-source.tar.gz
+  register: download_ruby
+
+- name: unpack source
+  shell: "mkdir -p /root/ruby && tar xzf /root/ruby-source.tar.gz --strip 1 -C /root/ruby"
+  when: download_ruby|changed
+
+- name: configure make and install (this will take a while)
+  shell: "cd /root/ruby && ./configure && make && make install"
+  when: download_ruby|changed
+
+- name: remove build artifacts
+  command: "rm -rf /root/ruby"
+  when: download_ruby|changed
+
+- name: update rubygems
+  command: "sudo gem update --system"
+  when: download_ruby|changed
+
+- name: install our gemrc file
+  copy: >
+    src=gemrc dest=/home/vagrant/.gemrc
+    owner=vagrant group=vagrant mode=0644
+
+- name: install gems
+  shell: "gem install {{ item }}"
+  with_items: "{{ ruby.gems }}"

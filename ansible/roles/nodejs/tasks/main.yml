@@ -1,0 +1,17 @@
+---
+- name: install node using apt
+  apt: >
+    pkg={{ item }} state=latest
+    install_recommends=no
+  with_items:
+    - nodejs
+    - npm
+  register: nodejs_install
+
+- name: create a sym link for node from nodejs
+  command: "ln -s /usr/bin/nodejs /usr/bin/node"
+  when: nodejs_install|changed
+
+- name: install npm packages
+  command: "sudo npm install -g {{ item }}"
+  with_items: "{{ nodejs.packages }}"

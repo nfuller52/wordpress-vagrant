@@ -1,0 +1,8 @@
+---
+- name: add the ansible ppa repository
+  apt_repository:
+    repo: "ppa:ansible/ansible"
+
+- name: install ansible
+  apt: >
+    pkg=ansible state=installed

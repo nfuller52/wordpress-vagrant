@@ -1,0 +1,59 @@
+---
+- shell: hostname
+  register: current_hostname
+
+- name: install mysql packages
+  apt: >
+    pkg={{ item }} state=latest
+  with_items:
+    - mysql-server
+    - mysql-client
+    - python-mysqldb
+  notify: restart mysql
+  register: install_mysql
+
+- name: update root password
+  mysql_user: >
+    login_user=root login_password={{ mysql.root_password }}
+    name=root password={{ mysql.root_password }}
+    check_implicit_admin=yes
+    host={{ item }}
+  with_items:
+    - "{{ current_hostname.stdout | lower }}"
+    - 127.0.0.1
+    - ::1
+    - localhost
+  when: install_mysql|changed
+
+- name: ensure anonymous users are not in the database
+  mysql_user: >
+    login_user=root login_password={{ mysql.root_password }}
+    name='' state=absent
+    host={{ item }}
+  with_items:
+    - localhost
+    - "{{ current_hostname.stdout | lower }}"
+  when: install_mysql|changed
+
+- name: remove the test database
+  mysql_db: >
+    login_user=root login_password={{ mysql.root_password }}
+    name=test state=absent
+  when: install_mysql|changed
+
+- name: create the mysql user for the WordPress database
+  mysql_user: >
+    login_user=root login_password={{ mysql.root_password }}
+    name={{ mysql.user.name }} password={{ mysql.user.password }}
+    priv={{ mysql.database.name }}.*:ALL,GRANT state=present
+
+- name: create the Wordpress database
+  mysql_db: >
+    login_user={{ mysql.user.name }} login_password={{ mysql.user.password }}
+    name={{ mysql.database.name }} state=present
+    encoding={{ mysql.database.encoding }}
+    collation={{ mysql.database.collation }}
+
+- name: confirm the mysql service daemon is running
+  service: >
+    name=mysql state=started
