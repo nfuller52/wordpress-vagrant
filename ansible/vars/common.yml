@@ -17,3 +17,5 @@ mysql:
     name: vippetcare_development
     encoding: utf8
     collation: utf8_general_ci
+php:
+  version: php5-5.6
