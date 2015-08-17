@@ -23,3 +23,19 @@
     path=/etc/nginx/sites-enabled/default
     state=absent
   notify: restart nginx
+
+- name: create the log directory
+  shell: "mkdir -p /vagrant/log/nginx/"
+
+- name: set the vagrant user as the owner
+  shell: "chown -R vagrant:vagrant /vagrant/log/"
+
+- name: create the access log
+  file: >
+    path=/vagrant/log/nginx/access.log state=touch
+    owner=vagrant group=vagrant mode=0777
+
+- name: create the error log
+  file: >
+    path=/vagrant/log/nginx/error.log state=touch
+    owner=vagrant group=vagrant mode=0777

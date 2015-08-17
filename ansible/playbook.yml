@@ -12,7 +12,7 @@
     - mysql
     - nginx
     - php
-    # - phpmyadmin
+    - phpmyadmin
     # - xdebug
     # - wp-cli
     # - composer

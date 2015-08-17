@@ -19,3 +19,8 @@ mysql:
     collation: utf8_general_ci
 php:
   version: php5-5.6
+phpmyadmin:
+  database: phpmyadmin
+  control_user:
+    name: phpmyadmin
+    password: passw0rD

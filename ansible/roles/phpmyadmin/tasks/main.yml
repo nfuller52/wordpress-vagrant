@@ -1,0 +1,46 @@
+---
+- name: install dbconfig-common
+  apt: >
+    pkg=dbconfig-common state=latest install_recommends=no
+
+- name: pre-configure the phpmyadmin database
+  template: >
+    src=phpmyadmin.conf.j2 dest=/etc/dbconfig-common/phpmyadmin.conf
+    owner=root group=root mode=0600
+
+- name: download the ppa repository
+  apt_repository: repo=ppa:nijel/phpmyadmin
+
+- name: install phpmyadmin package
+  apt: pkg=phpmyadmin state=latest
+
+- name: create the phpmyadmin control database
+  mysql_db: >
+    login_user=root login_password={{ mysql.root_password }}
+    name={{ phpmyadmin.database }} state=present
+  register: phpmyadmin_database
+
+- name: import the schema
+  mysql_db: >
+    login_user=root login_password={{ mysql.root_password }}
+    name={{ phpmyadmin.database }} state=import
+    target=/usr/share/dbconfig-common/data/phpmyadmin/install/mysql
+  when: phpmyadmin_database|changed
+
+- name: create the control user
+  mysql_user: >
+    login_user=root login_password={{ mysql.root_password }}
+    name={{ phpmyadmin.control_user.name }} password={{ phpmyadmin.control_user.password }}
+    state=present priv='{{ phpmyadmin.database }}.*:ALL'
+  when: phpmyadmin_database|changed
+
+- name: create the phpmyadmin web dir
+  file: >
+    path=/srv/www/ state=directory force=yes
+
+- name: sym link to the phpmyadmin user interace
+  file: >
+    src=/usr/share/phpmyadmin
+    path=/srv/www/phpmyadmin
+    owner=root group=root mode=0744
+    state=link force=yes
