@@ -4,7 +4,6 @@
     url=https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
     dest=/usr/local/bin/wp
 
-- name: update permissions
+- name: change mode on the binary
   file: >
-    path=/usr/local/bin/wp
-    mode=0755
+    path=/usr/local/bin/wp mode=0755
