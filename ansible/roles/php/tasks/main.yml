@@ -32,3 +32,14 @@
     dest=/etc/php5/cli/php.ini
     regexp="date.timezone ="
     line="date.timezone = {{ timezone }}"
+
+- name: create the log directory
+  shell: "mkdir -p /vagrant/log/php/"
+
+- name: set the vagrant user as the owner
+  shell: "chown -R vagrant:vagrant /vagrant/log/"
+
+- name: create the php error log
+  file: >
+    path=/vagrant/log/php/errors.log state=touch
+    owner=vagrant group=vagrant mode=0777
