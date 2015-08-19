@@ -1,0 +1,10 @@
+---
+- name: install xdebug
+  apt: >
+    pkg=php5-xdebug state=latest install_recommends=no
+
+- name: install the settings script for xdebug
+  template: >
+    src=xdebug.ini.j2 dest=/etc/php5/mods-available/xdebug.ini
+    owner=root group=root mode=0644
+  notify: restart php5-fpm

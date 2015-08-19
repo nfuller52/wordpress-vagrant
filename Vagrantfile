@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 require 'yaml'
 
-variables_path = [File.dirname(__FILE__), '/ansible/vars/common.yml'].join
+variables_path = [File.dirname(__FILE__), '/system/ansible/group_vars/all.yml'].join
 variables = YAML::load(File.open(variables_path))
 
 Vagrant.configure(2) do |config|
@@ -11,9 +11,11 @@ Vagrant.configure(2) do |config|
   config.vm.box = 'ubuntu/trusty64'
   config.vm.network :private_network, ip: variables['network_address']
 
+  config.vm.define (variables['name']) { |devel| }
+
   config.vm.provision :ansible do |ansible|
-    ansible.playbook = 'ansible/playbook.yml'
-    ansible.inventory_path = 'ansible/inventory'
+    ansible.playbook = 'system/ansible/playbook.yml'
+    ansible.inventory_path = 'system/ansible/inventory'
     ansible.host_key_checking = 'false'
     ansible.limit = 'all'
   end
@@ -26,5 +28,5 @@ Vagrant.configure(2) do |config|
     vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
   end
 
-  config.vm.synced_folder '.', '/vagrant'
+  config.vm.synced_folder './app', '/vagrant', type: "nfs"
 end

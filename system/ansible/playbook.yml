@@ -1,0 +1,39 @@
+---
+- hosts: vagrant
+  remote_user: vagrant
+  sudo: yes
+  vars_files:
+    - group_vars/all.yml
+  roles:
+    - common
+    - ruby
+    - ansible
+    - nodejs
+    - mysql
+    - nginx
+    - php
+    - phpmyadmin
+    - xdebug
+    - wp-cli
+    - composer
+    - wpcs
+
+- hosts: local
+  sudo: yes
+  gather_facts: False
+  vars_files:
+    - group_vars/all.yml
+
+  tasks:
+
+  - name: remove existing /etc/hosts entries to avoid collisions
+    lineinfile: >
+      state=absent
+      dest=/etc/hosts
+      regexp="ansible-{{ name }}"
+
+  - name: create a record within /etc/hosts for this local box
+    lineinfile: >
+      state=present
+      dest=/etc/hosts
+      line="{{ network_address }} {{ site_hostname }} #ansible-{{ name }}"
