@@ -1,3 +1,7 @@
 .vagrant
 .DS_Store
 **/.git
+app/wp*/
+app/*.php
+app/*.txt
+app/*.html
